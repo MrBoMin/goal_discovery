@@ -81,12 +81,13 @@ export default function ResultsPage() {
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
-          orientation: 'portrait' as const
+          orientation: 'portrait' as 'portrait'
         },
         pagebreak: { mode: 'avoid-all' }
-      };
+      } as const;
       
-      await html2pdf().set(opt).from(element).save();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await html2pdf().set(opt as any).from(element).save();
     } catch (err) {
       console.error('PDF generation error:', err);
       alert('Failed to generate PDF. Please try again.');
