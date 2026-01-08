@@ -81,7 +81,7 @@ export default function ResultsPage() {
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
-          orientation: 'portrait' 
+          orientation: 'portrait' as const
         },
         pagebreak: { mode: 'avoid-all' }
       };
