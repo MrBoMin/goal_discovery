@@ -69,7 +69,8 @@ export default function ResultsPage() {
       const html2pdf = (await import('html2pdf.js')).default;
       
       const element = resultsRef.current;
-      const opt = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const opt: any = {
         margin: [20, 20, 20, 20],
         filename: `career-path-${analysis.careerArchetype.toLowerCase().replace(/\s+/g, '-')}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
@@ -81,13 +82,12 @@ export default function ResultsPage() {
         jsPDF: { 
           unit: 'mm', 
           format: 'a4', 
-          orientation: 'portrait' as 'portrait'
+          orientation: 'portrait'
         },
         pagebreak: { mode: 'avoid-all' }
-      } as const;
+      };
       
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await html2pdf().set(opt as any).from(element).save();
+      await html2pdf().set(opt).from(element).save();
     } catch (err) {
       console.error('PDF generation error:', err);
       alert('Failed to generate PDF. Please try again.');
