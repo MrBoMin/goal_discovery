@@ -55,7 +55,7 @@ export default function FAQPage() {
     {
       question: 'What technology powers the analysis?',
       answer:
-        'We use Claude AI by Anthropic (specifically the claude-sonnet-4 model) to analyze your responses. Claude is a state-of-the-art AI assistant trained to understand nuanced human needs and provide thoughtful, personalized insights.',
+        'We use OpenAI GPT (specifically GPT-4 Turbo) to analyze your responses. GPT-4 is a state-of-the-art AI model trained to understand nuanced human needs and provide thoughtful, personalized insights.',
     },
     {
       question: 'Will I receive follow-up emails?',

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { QuestionResponse, AnalysisResult } from '@/lib/types';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 export async function POST(request: NextRequest) {
@@ -29,7 +29,22 @@ export async function POST(request: NextRequest) {
       .map((r: QuestionResponse) => `Q${r.questionId}: ${r.question}\nA: ${r.answer}`)
       .join('\n\n');
 
-    const prompt = `You are a career clarity coach analyzing self-reflection responses. Based on these 12 strategic questions and answers, identify:
+    const systemPrompt = `You are a career clarity coach analyzing self-reflection responses. Based on 12 strategic questions and answers, you identify career archetypes, strengths, blind spots, and action plans.
+
+Always respond with ONLY a valid JSON object in this exact format (no markdown, no explanations):
+{
+  "careerArchetype": "...",
+  "archetypeDescription": "...",
+  "keyInsights": ["...", "...", "..."],
+  "blindSpots": ["...", "..."],
+  "actionPlan": [
+    {"step": 1, "title": "...", "description": "..."},
+    {"step": 2, "title": "...", "description": "..."},
+    {"step": 3, "title": "...", "description": "..."}
+  ]
+}`;
+
+    const userPrompt = `Based on these 12 strategic questions and answers, identify:
 
 1. PRIMARY CAREER ARCHETYPE: One of these categories:
    - Knowledge Entrepreneur (consultant, coach, advisor)
@@ -48,44 +63,37 @@ export async function POST(request: NextRequest) {
 User's Responses:
 ${formattedResponses}
 
-Format your response as valid JSON with this exact structure:
-{
-  "careerArchetype": "...",
-  "archetypeDescription": "...",
-  "keyInsights": ["...", "...", "..."],
-  "blindSpots": ["...", "..."],
-  "actionPlan": [
-    {"step": 1, "title": "...", "description": "..."},
-    {"step": 2, "title": "...", "description": "..."},
-    {"step": 3, "title": "...", "description": "..."}
-  ]
-}
+Return ONLY the JSON object.`;
 
-IMPORTANT: Return ONLY the JSON object, with no markdown code blocks, no explanations, and no additional text.`;
-
-    // Call Claude API
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 2000,
+    // Call OpenAI API
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4-turbo-preview', // or 'gpt-4' or 'gpt-3.5-turbo'
       messages: [
         {
+          role: 'system',
+          content: systemPrompt,
+        },
+        {
           role: 'user',
-          content: prompt,
+          content: userPrompt,
         },
       ],
+      temperature: 0.7,
+      max_tokens: 2000,
+      response_format: { type: 'json_object' }, // Force JSON response
     });
 
-    // Extract the text content
-    const textContent = message.content.find((block) => block.type === 'text');
-    if (!textContent || textContent.type !== 'text') {
-      throw new Error('No text content in Claude response');
+    // Extract the response
+    const responseText = completion.choices[0]?.message?.content;
+    if (!responseText) {
+      throw new Error('No response from OpenAI');
     }
 
     // Parse the JSON response
     let analysisResult: AnalysisResult;
     try {
       // Remove any markdown code blocks if present
-      let cleanedText = textContent.text.trim();
+      let cleanedText = responseText.trim();
       if (cleanedText.startsWith('```json')) {
         cleanedText = cleanedText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
       } else if (cleanedText.startsWith('```')) {
@@ -94,7 +102,7 @@ IMPORTANT: Return ONLY the JSON object, with no markdown code blocks, no explana
 
       analysisResult = JSON.parse(cleanedText);
     } catch {
-      console.error('Failed to parse Claude response:', textContent.text);
+      console.error('Failed to parse OpenAI response:', responseText);
       throw new Error('Failed to parse AI analysis result');
     }
 

@@ -19,7 +19,7 @@ This guide covers everything you need to deploy the Find Your Path application t
 
 Before deploying, ensure you have:
 
-- [ ] Valid Anthropic API key
+- [ ] Valid OpenAI API key
 - [ ] Valid Resend API key
 - [ ] Verified domain in Resend (for email sending)
 - [ ] GitHub repository with your code
@@ -34,8 +34,8 @@ Before deploying, ensure you have:
 Create these in your deployment platform:
 
 ```env
-# Anthropic Claude AI (Required)
-ANTHROPIC_API_KEY=sk-ant-api03-...
+# OpenAI GPT AI (Required)
+OPENAI_API_KEY=sk-...
 
 # Resend Email Service (Required)
 RESEND_API_KEY=re_...
@@ -50,14 +50,14 @@ NEXT_PUBLIC_APP_URL=https://yourdomain.com
 
 ### Getting Your API Keys
 
-#### Anthropic API Key
+#### OpenAI API Key
 
-1. Go to [https://console.anthropic.com/](https://console.anthropic.com/)
+1. Go to [https://platform.openai.com/api-keys/](https://platform.openai.com/api-keys/)
 2. Sign up or log in
 3. Navigate to API Keys
 4. Create a new API key
-5. Copy the key (starts with `sk-ant-api03-`)
-6. Note: Claude API usage is billed separately
+5. Copy the key (starts with `sk-`)
+6. Note: OpenAI API usage is billed separately (pay-as-you-go)
 
 #### Resend API Key
 
@@ -369,7 +369,7 @@ npm run build
 **Error:** `Failed to analyze responses`
 
 **Solution:**
-- Check `ANTHROPIC_API_KEY` is set correctly
+- Check `OPENAI_API_KEY` is set correctly
 - Verify API key has sufficient credits
 - Check Vercel function logs
 
@@ -429,7 +429,7 @@ If adding a database:
 
 ### Current Limits
 
-- **Anthropic API**: Depends on your tier
+- **OpenAI API**: Depends on your tier
 - **Resend Free Tier**: 100 emails/day
 - **Vercel Free Tier**: 100 GB bandwidth/month
 
@@ -461,7 +461,7 @@ For production, consider:
 
 ### Regular Tasks
 
-- Monitor API usage (Anthropic console)
+- Monitor API usage (OpenAI console)
 - Check email delivery rates (Resend dashboard)
 - Review error logs (Vercel/Netlify)
 - Update dependencies monthly

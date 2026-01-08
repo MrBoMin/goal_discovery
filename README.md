@@ -26,7 +26,7 @@ A free, AI-powered career clarity tool that helps users discover their true care
 - ✅ Progress bar showing completion (1/12, 2/12, etc.)
 - ✅ Skip option for each question
 - ✅ Mobile-first, fully responsive design
-- ✅ AI analysis using Claude API (claude-sonnet-4-20250514)
+- ✅ AI analysis using Claude API (GPT-4 Turbo)
 - ✅ Six career archetypes identified
 - ✅ Email capture with Resend integration
 - ✅ Comprehensive FAQ page
@@ -37,7 +37,7 @@ A free, AI-powered career clarity tool that helps users discover their true care
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
-- **AI:** Anthropic Claude API (claude-sonnet-4-20250514)
+- **AI:** OpenAI GPT API (GPT-4 Turbo)
 - **Email:** Resend
 - **Deployment:** Vercel (recommended)
 
@@ -47,7 +47,7 @@ Before you begin, ensure you have:
 
 - Node.js 18+ installed
 - npm or yarn package manager
-- Anthropic API key ([Get one here](https://console.anthropic.com/))
+- OpenAI API key ([Get one here](https://platform.openai.com/api-keys/))
 - Resend API key ([Get one here](https://resend.com/))
 
 ## 🚀 Getting Started
@@ -76,8 +76,8 @@ cp .env.example .env.local
 Edit `.env.local` with your actual API keys:
 
 ```env
-# Anthropic API Key for Claude AI Analysis
-ANTHROPIC_API_KEY=sk-ant-your-actual-key-here
+# OpenAI API Key for GPT AI Analysis
+OPENAI_API_KEY=sk-your-actual-key-here
 
 # Resend API Key for Email Sending
 RESEND_API_KEY=re_your-actual-key-here
@@ -104,7 +104,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 goal_discovery/
 ├── app/
 │   ├── api/
-│   │   ├── analyze/         # Claude API integration
+│   │   ├── analyze/         # OpenAI GPT API integration
 │   │   └── send-email/      # Resend email integration
 │   ├── questions/
 │   │   └── [id]/           # Dynamic question pages
@@ -163,7 +163,7 @@ The AI identifies one of six primary career archetypes:
 2. Go to [Vercel](https://vercel.com)
 3. Import your repository
 4. Add environment variables in Vercel dashboard:
-   - `ANTHROPIC_API_KEY`
+   - `OPENAI_API_KEY`
    - `RESEND_API_KEY`
    - `FROM_EMAIL`
    - `ADMIN_EMAIL`
@@ -280,7 +280,7 @@ For questions or issues:
 
 - Inspired by "Master Your Focus" by Thibaut Meurisse
 - Built with [Next.js](https://nextjs.org/)
-- AI powered by [Anthropic Claude](https://anthropic.com/)
+- AI powered by [OpenAI GPT](https://openai.com/)
 - Email by [Resend](https://resend.com/)
 
 ---
