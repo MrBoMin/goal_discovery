@@ -26,8 +26,10 @@ export async function POST(request: NextRequest) {
     const htmlContent = generateEmailHTML(data);
 
     // Send email using Resend
+    // Note: With Resend's free tier, you can only send to your own verified email
+    // For production, verify your own domain at https://resend.com/domains
     const result = await resend.emails.send({
-      from: process.env.FROM_EMAIL || 'Find Your Path <noreply@yourdomain.com>',
+      from: process.env.FROM_EMAIL || 'Find Your Path <onboarding@resend.dev>',
       to: data.email,
       subject: `Your Career Path: ${data.analysis.careerArchetype}`,
       html: htmlContent,
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest) {
     // Optional: Send notification to admin
     if (process.env.ADMIN_EMAIL) {
       await resend.emails.send({
-        from: process.env.FROM_EMAIL || 'Find Your Path <noreply@yourdomain.com>',
+        from: process.env.FROM_EMAIL || 'Find Your Path <onboarding@resend.dev>',
         to: process.env.ADMIN_EMAIL,
         subject: 'New Find Your Path Completion',
         html: `

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { loadProgress, clearProgress } from '@/lib/storage';
@@ -11,12 +11,8 @@ export default function ResultsPage() {
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showEmailForm, setShowEmailForm] = useState(false);
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [currentSituation, setCurrentSituation] = useState('');
-  const [isSendingEmail, setIsSendingEmail] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     analyzeResponses();
@@ -63,36 +59,39 @@ export default function ResultsPage() {
     }
   };
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email || !analysis) return;
-
-    setIsSendingEmail(true);
-
+  const handleDownloadPdf = async () => {
+    if (!resultsRef.current || !analysis) return;
+    
+    setIsGeneratingPdf(true);
+    
     try {
-      const response = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      // Dynamically import html2pdf to avoid SSR issues
+      const html2pdf = (await import('html2pdf.js')).default;
+      
+      const element = resultsRef.current;
+      const opt = {
+        margin: [20, 20, 20, 20],
+        filename: `career-path-${analysis.careerArchetype.toLowerCase().replace(/\s+/g, '-')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+          scale: 2,
+          useCORS: true,
+          letterRendering: true,
         },
-        body: JSON.stringify({
-          email,
-          name,
-          currentSituation,
-          analysis,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send email');
-      }
-
-      setEmailSent(true);
-      setShowEmailForm(false);
-    } catch {
-      alert('Failed to send email. Please try again.');
+        jsPDF: { 
+          unit: 'mm', 
+          format: 'a4', 
+          orientation: 'portrait' 
+        },
+        pagebreak: { mode: 'avoid-all' }
+      };
+      
+      await html2pdf().set(opt).from(element).save();
+    } catch (err) {
+      console.error('PDF generation error:', err);
+      alert('Failed to generate PDF. Please try again.');
     } finally {
-      setIsSendingEmail(false);
+      setIsGeneratingPdf(false);
     }
   };
 
@@ -140,30 +139,39 @@ export default function ResultsPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-ink-faint">
+      <header className="border-b border-ink-faint print:hidden">
         <div className="container mx-auto px-6 py-6">
           <div className="flex justify-between items-center">
             <Link href="/" className="font-mono text-xs tracking-widest uppercase">
               Find Your Path
             </Link>
-            <button
-              onClick={handleStartOver}
-              className="font-mono text-xs text-ink-light hover:text-ink-black transition-colors tracking-widest uppercase"
-            >
-              Start Over
-            </button>
+            <div className="flex items-center gap-6">
+              <button
+                onClick={handleDownloadPdf}
+                disabled={isGeneratingPdf}
+                className="font-mono text-xs tracking-widest uppercase hover:text-ink-light transition-colors disabled:opacity-50"
+              >
+                {isGeneratingPdf ? 'Generating...' : 'Download PDF'}
+              </button>
+              <button
+                onClick={handleStartOver}
+                className="font-mono text-xs text-ink-light hover:text-ink-black transition-colors tracking-widest uppercase"
+              >
+                Start Over
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-16">
+      {/* Main Content - This is what gets exported to PDF */}
+      <main className="container mx-auto px-6 py-16" ref={resultsRef}>
         <div className="max-w-3xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-20 animate-fade-in">
             <span className="font-mono text-xs tracking-widest text-ink-light uppercase">Your Result</span>
             <div className="w-px h-12 bg-ink-black mx-auto my-8"></div>
-            <h1 className="heading-display mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight leading-none mb-6">
               {analysis.careerArchetype}
             </h1>
             <p className="text-body max-w-xl mx-auto">
@@ -207,8 +215,6 @@ export default function ResultsPage() {
                   key={index}
                   className="p-6 border border-ink-faint relative"
                 >
-                  <div className="corner-decoration corner-tl"></div>
-                  <div className="corner-decoration corner-br"></div>
                   <p className="text-body">{blindSpot}</p>
                 </div>
               ))}
@@ -239,108 +245,32 @@ export default function ResultsPage() {
             </div>
           </section>
 
-          {/* Email Capture CTA */}
-          {!emailSent && !showEmailForm && (
-            <section className="border border-ink-black p-12 text-center">
-              <h3 className="text-xl mb-4">Save Your Results</h3>
-              <p className="text-body text-sm mb-8 max-w-md mx-auto">
-                Receive a beautifully formatted copy of your analysis via email.
-              </p>
-              <button
-                onClick={() => setShowEmailForm(true)}
-                className="btn-primary"
-              >
-                Get My Report
-              </button>
-            </section>
-          )}
+          {/* Download CTA */}
+          <section className="border border-ink-black p-12 text-center print:hidden">
+            <h3 className="text-xl mb-4">Save Your Results</h3>
+            <p className="text-body text-sm mb-8 max-w-md mx-auto">
+              Download a PDF copy of your career path analysis to reference anytime.
+            </p>
+            <button
+              onClick={handleDownloadPdf}
+              disabled={isGeneratingPdf}
+              className="btn-primary disabled:opacity-50"
+            >
+              {isGeneratingPdf ? 'Generating PDF...' : 'Download as PDF'}
+            </button>
+          </section>
 
-          {/* Email Form */}
-          {showEmailForm && !emailSent && (
-            <section className="border border-ink-black p-8 md:p-12">
-              <h3 className="text-xl mb-8">Get Your Report</h3>
-              <form onSubmit={handleEmailSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="email" className="block font-mono text-xs tracking-widest uppercase text-ink-light mb-2">
-                    Email *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="input-field text-lg"
-                    placeholder="you@example.com"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="name" className="block font-mono text-xs tracking-widest uppercase text-ink-light mb-2">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="input-field text-lg"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor="currentSituation"
-                    className="block font-mono text-xs tracking-widest uppercase text-ink-light mb-2"
-                  >
-                    Current Situation
-                  </label>
-                  <textarea
-                    id="currentSituation"
-                    value={currentSituation}
-                    onChange={(e) => setCurrentSituation(e.target.value)}
-                    className="textarea-field text-lg min-h-[100px]"
-                    placeholder="Where are you now..."
-                  />
-                </div>
-                <div className="flex gap-4 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowEmailForm(false)}
-                    className="btn-secondary flex-1"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSendingEmail}
-                    className="btn-primary flex-1 disabled:opacity-30"
-                  >
-                    {isSendingEmail ? 'Sending...' : 'Send'}
-                  </button>
-                </div>
-              </form>
-            </section>
-          )}
-
-          {/* Email Sent Confirmation */}
-          {emailSent && (
-            <section className="border border-ink-black p-12 text-center">
-              <div className="w-12 h-12 border border-ink-black flex items-center justify-center mx-auto mb-6">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h3 className="text-xl mb-2">Sent</h3>
-              <p className="text-body text-sm">
-                Your report has been sent to <span className="text-ink-black">{email}</span>
-              </p>
-            </section>
-          )}
+          {/* Footer for PDF */}
+          <div className="mt-16 pt-8 border-t border-ink-faint text-center hidden print:block">
+            <p className="font-mono text-xs text-ink-light">
+              Generated by Find Your Path • findyourpath.com
+            </p>
+          </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-ink-faint">
+      <footer className="border-t border-ink-faint print:hidden">
         <div className="container mx-auto px-6 py-8">
           <div className="text-center">
             <Link href="/faq" className="font-mono text-xs text-ink-light hover:text-ink-black transition-colors tracking-widest uppercase">
