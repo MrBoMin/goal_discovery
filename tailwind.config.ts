@@ -9,34 +9,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
-        },
-        peaceful: {
-          blue: '#6B9BD1',
-          lightBlue: '#E8F1F8',
-          gray: '#F5F7FA',
-          darkGray: '#4A5568',
-          white: '#FFFFFF',
+        background: "#ffffff",
+        foreground: "#000000",
+        ink: {
+          black: '#000000',
+          dark: '#1a1a1a',
+          medium: '#4a4a4a',
+          light: '#8a8a8a',
+          faint: '#d4d4d4',
+          whisper: '#f5f5f5',
         },
       },
       fontFamily: {
-        sans: ['var(--font-geist-sans)', 'Inter', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-geist-sans)', 'system-ui', 'sans-serif'],
+        mono: ['var(--font-geist-mono)', 'monospace'],
       },
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in',
-        'slide-up': 'slideUp 0.5s ease-out',
+        'fade-in': 'fadeIn 0.6s ease-out',
+        'slide-up': 'slideUp 0.6s ease-out',
+        'draw-line': 'drawLine 1s ease-out forwards',
       },
       keyframes: {
         fadeIn: {
@@ -47,6 +38,13 @@ const config: Config = {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        drawLine: {
+          '0%': { strokeDashoffset: '100' },
+          '100%': { strokeDashoffset: '0' },
+        },
+      },
+      borderWidth: {
+        '1': '1px',
       },
     },
   },

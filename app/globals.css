@@ -3,9 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: #F5F7FA;
-  --foreground: #2D3748;
-  --accent: #6B9BD1;
+  --background: #ffffff;
+  --foreground: #000000;
 }
 
 * {
@@ -23,11 +22,15 @@ body {
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Selection */
+::selection {
+  background: #000;
+  color: #fff;
 }
 
 @layer utilities {
@@ -37,31 +40,121 @@ body {
 }
 
 @layer components {
+  /* Minimalist Buttons */
   .btn-primary {
-    @apply bg-peaceful-blue text-white px-6 py-3 rounded-lg font-medium
-           hover:opacity-90 transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-peaceful-blue focus:ring-offset-2;
+    @apply bg-ink-black text-white px-8 py-4 font-medium tracking-wide
+           border border-ink-black
+           hover:bg-white hover:text-ink-black
+           transition-all duration-300 ease-out
+           focus:outline-none focus:ring-1 focus:ring-ink-black focus:ring-offset-2;
   }
 
   .btn-secondary {
-    @apply bg-white text-peaceful-darkGray px-6 py-3 rounded-lg font-medium
-           border border-gray-300 hover:bg-gray-50 transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-peaceful-blue focus:ring-offset-2;
+    @apply bg-white text-ink-black px-8 py-4 font-medium tracking-wide
+           border border-ink-black
+           hover:bg-ink-black hover:text-white
+           transition-all duration-300 ease-out
+           focus:outline-none focus:ring-1 focus:ring-ink-black focus:ring-offset-2;
   }
 
+  /* Minimalist Card */
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+    @apply bg-white border border-ink-faint p-8;
   }
 
+  .card-outlined {
+    @apply bg-white border border-ink-black p-8;
+  }
+
+  /* Line Art Decorative Elements */
+  .line-accent {
+    @apply w-12 h-px bg-ink-black;
+  }
+
+  .line-accent-vertical {
+    @apply w-px h-12 bg-ink-black;
+  }
+
+  /* Form Elements */
   .input-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg
-           focus:outline-none focus:ring-2 focus:ring-peaceful-blue focus:border-transparent
-           transition-all duration-200;
+    @apply w-full px-0 py-4 bg-transparent
+           border-0 border-b border-ink-faint
+           focus:outline-none focus:border-ink-black
+           transition-colors duration-300
+           placeholder:text-ink-light;
   }
 
   .textarea-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg
-           focus:outline-none focus:ring-2 focus:ring-peaceful-blue focus:border-transparent
-           transition-all duration-200 resize-none;
+    @apply w-full px-0 py-4 bg-transparent
+           border-0 border-b border-ink-faint
+           focus:outline-none focus:border-ink-black
+           transition-colors duration-300 resize-none
+           placeholder:text-ink-light;
   }
+
+  /* Typography */
+  .heading-display {
+    @apply text-5xl md:text-7xl font-light tracking-tight leading-none;
+  }
+
+  .heading-section {
+    @apply text-2xl md:text-3xl font-light tracking-tight;
+  }
+
+  .text-body {
+    @apply text-base font-light leading-relaxed text-ink-medium;
+  }
+
+  /* Decorative corner */
+  .corner-decoration {
+    @apply absolute w-6 h-6 border-ink-black;
+  }
+  
+  .corner-tl {
+    @apply top-0 left-0 border-t border-l;
+  }
+  
+  .corner-tr {
+    @apply top-0 right-0 border-t border-r;
+  }
+  
+  .corner-bl {
+    @apply bottom-0 left-0 border-b border-l;
+  }
+  
+  .corner-br {
+    @apply bottom-0 right-0 border-b border-r;
+  }
+}
+
+/* Custom scrollbar - minimalist */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8a8a8a;
+}
+
+/* Line art pattern background */
+.pattern-lines {
+  background-image: 
+    linear-gradient(90deg, transparent 99%, #f5f5f5 99%);
+  background-size: 80px 80px;
+}
+
+/* Subtle grid pattern */
+.pattern-grid {
+  background-image: 
+    linear-gradient(#f5f5f5 1px, transparent 1px),
+    linear-gradient(90deg, #f5f5f5 1px, transparent 1px);
+  background-size: 40px 40px;
 }

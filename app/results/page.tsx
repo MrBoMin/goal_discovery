@@ -57,7 +57,7 @@ export default function ResultsPage() {
   };
 
   const handleStartOver = () => {
-    if (confirm('Are you sure you want to start over? This will clear your current responses.')) {
+    if (confirm('Start over? This will clear your responses.')) {
       clearProgress();
       router.push('/');
     }
@@ -98,18 +98,20 @@ export default function ResultsPage() {
 
   if (isAnalyzing) {
     return (
-      <div className="min-h-screen bg-peaceful-gray flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <div className="mb-8">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-peaceful-blue mx-auto"></div>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="mb-12">
+            {/* Line art loading animation */}
+            <div className="relative w-16 h-16 mx-auto">
+              <div className="absolute inset-0 border border-ink-black animate-spin" style={{ animationDuration: '3s' }}></div>
+              <div className="absolute inset-2 border border-ink-faint animate-spin" style={{ animationDuration: '2s', animationDirection: 'reverse' }}></div>
+            </div>
           </div>
-          <h2 className="text-2xl font-bold text-peaceful-darkGray mb-4">
-            Analyzing Your Responses...
-          </h2>
-          <p className="text-gray-600 mb-4">
-            Our AI is carefully reviewing your answers to provide personalized insights.
+          <h2 className="text-xl font-light mb-4">Analyzing</h2>
+          <p className="text-body text-sm">
+            Processing your responses to uncover insights...
           </p>
-          <p className="text-sm text-gray-500">This usually takes 10-30 seconds</p>
+          <p className="font-mono text-xs text-ink-light mt-4">10-30 seconds</p>
         </div>
       </div>
     );
@@ -117,14 +119,14 @@ export default function ResultsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-peaceful-gray flex items-center justify-center">
-        <div className="text-center max-w-md mx-auto px-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-bold text-red-800 mb-2">Analysis Error</h2>
-            <p className="text-red-600">{error}</p>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="border border-ink-black p-8 mb-8">
+            <h2 className="text-xl mb-4">Error</h2>
+            <p className="text-body text-sm">{error}</p>
           </div>
           <Link href="/" className="btn-primary">
-            Go Home
+            Return Home
           </Link>
         </div>
       </div>
@@ -136,17 +138,17 @@ export default function ResultsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-peaceful-gray">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="container mx-auto px-4 py-6">
+      <header className="border-b border-ink-faint">
+        <div className="container mx-auto px-6 py-6">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-peaceful-blue">
+            <Link href="/" className="font-mono text-xs tracking-widest uppercase">
               Find Your Path
             </Link>
             <button
               onClick={handleStartOver}
-              className="text-sm text-gray-600 hover:text-peaceful-blue transition-colors"
+              className="font-mono text-xs text-ink-light hover:text-ink-black transition-colors tracking-widest uppercase"
             >
               Start Over
             </button>
@@ -155,110 +157,82 @@ export default function ResultsPage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
+      <main className="container mx-auto px-6 py-16">
+        <div className="max-w-3xl mx-auto">
           {/* Hero Section */}
-          <div className="text-center mb-12 animate-fade-in">
-            <h1 className="text-4xl md:text-5xl font-bold text-peaceful-darkGray mb-4">
-              Your Career Path:
-            </h1>
-            <h2 className="text-3xl md:text-4xl font-bold text-peaceful-blue mb-6">
+          <div className="text-center mb-20 animate-fade-in">
+            <span className="font-mono text-xs tracking-widest text-ink-light uppercase">Your Result</span>
+            <div className="w-px h-12 bg-ink-black mx-auto my-8"></div>
+            <h1 className="heading-display mb-6">
               {analysis.careerArchetype}
-            </h2>
-            <p className="text-xl text-gray-700 max-w-2xl mx-auto leading-relaxed">
+            </h1>
+            <p className="text-body max-w-xl mx-auto">
               {analysis.archetypeDescription}
             </p>
           </div>
 
           {/* Key Insights Section */}
-          <section className="mb-12 animate-slide-up">
-            <h3 className="text-2xl font-bold text-peaceful-darkGray mb-6">
-              Key Insights About You
-            </h3>
-            <div className="space-y-4">
+          <section className="mb-20 animate-slide-up">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-8 h-px bg-ink-black"></div>
+              <span className="font-mono text-xs tracking-widest text-ink-light uppercase">Insights</span>
+            </div>
+            
+            <div className="space-y-0">
               {analysis.keyInsights.map((insight, index) => (
                 <div
                   key={index}
-                  className="card hover:shadow-md transition-shadow"
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  className="py-6 border-t border-ink-faint flex gap-6"
                 >
-                  <div className="flex gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-peaceful-blue bg-opacity-10 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-5 h-5 text-peaceful-blue"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 flex-1">{insight}</p>
-                  </div>
+                  <span className="font-mono text-xs text-ink-light w-6 flex-shrink-0">
+                    {(index + 1).toString().padStart(2, '0')}
+                  </span>
+                  <p className="text-body flex-1">{insight}</p>
                 </div>
               ))}
+              <div className="border-b border-ink-faint"></div>
             </div>
           </section>
 
           {/* Blind Spots Section */}
-          <section className="mb-12">
-            <h3 className="text-2xl font-bold text-peaceful-darkGray mb-6">
-              Your Blind Spots
-            </h3>
+          <section className="mb-20">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-8 h-px bg-ink-black"></div>
+              <span className="font-mono text-xs tracking-widest text-ink-light uppercase">Blind Spots</span>
+            </div>
+            
             <div className="space-y-4">
               {analysis.blindSpots.map((blindSpot, index) => (
                 <div
                   key={index}
-                  className="card bg-orange-50 border-orange-200 hover:shadow-md transition-shadow"
+                  className="p-6 border border-ink-faint relative"
                 >
-                  <div className="flex gap-4">
-                    <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center">
-                        <svg
-                          className="w-5 h-5 text-orange-600"
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <p className="text-gray-700 flex-1">{blindSpot}</p>
-                  </div>
+                  <div className="corner-decoration corner-tl"></div>
+                  <div className="corner-decoration corner-br"></div>
+                  <p className="text-body">{blindSpot}</p>
                 </div>
               ))}
             </div>
           </section>
 
           {/* Action Plan Section */}
-          <section className="mb-12">
-            <h3 className="text-2xl font-bold text-peaceful-darkGray mb-6">
-              Your 90-Day Action Plan
-            </h3>
-            <div className="space-y-6">
+          <section className="mb-20">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-8 h-px bg-ink-black"></div>
+              <span className="font-mono text-xs tracking-widest text-ink-light uppercase">90-Day Plan</span>
+            </div>
+            
+            <div className="space-y-8">
               {analysis.actionPlan.map((action, index) => (
-                <div key={index} className="card hover:shadow-md transition-shadow">
-                  <div className="flex gap-6">
-                    <div className="flex-shrink-0">
-                      <div className="w-12 h-12 bg-peaceful-blue text-white rounded-full flex items-center justify-center text-xl font-bold">
-                        {action.step}
-                      </div>
+                <div key={index} className="flex gap-8">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 border border-ink-black flex items-center justify-center font-mono text-sm">
+                      {action.step.toString().padStart(2, '0')}
                     </div>
-                    <div className="flex-1">
-                      <h4 className="text-xl font-semibold text-peaceful-darkGray mb-2">
-                        {action.title}
-                      </h4>
-                      <p className="text-gray-700">{action.description}</p>
-                    </div>
+                  </div>
+                  <div className="flex-1 pt-2">
+                    <h4 className="text-lg mb-2">{action.title}</h4>
+                    <p className="text-body text-sm">{action.description}</p>
                   </div>
                 </div>
               ))}
@@ -267,31 +241,28 @@ export default function ResultsPage() {
 
           {/* Email Capture CTA */}
           {!emailSent && !showEmailForm && (
-            <section className="card bg-gradient-to-br from-peaceful-blue to-primary-600 text-white text-center py-12">
-              <h3 className="text-2xl font-bold mb-4">Want Your Full PDF Report?</h3>
-              <p className="text-lg mb-6 opacity-90">
-                Get a beautifully formatted PDF of your results plus weekly clarity emails
-                to support your journey.
+            <section className="border border-ink-black p-12 text-center">
+              <h3 className="text-xl mb-4">Save Your Results</h3>
+              <p className="text-body text-sm mb-8 max-w-md mx-auto">
+                Receive a beautifully formatted copy of your analysis via email.
               </p>
               <button
                 onClick={() => setShowEmailForm(true)}
-                className="bg-white text-peaceful-blue px-8 py-4 rounded-lg font-semibold text-lg hover:bg-opacity-90 transition-all"
+                className="btn-primary"
               >
-                Get My Free PDF Report
+                Get My Report
               </button>
             </section>
           )}
 
           {/* Email Form */}
           {showEmailForm && !emailSent && (
-            <section className="card">
-              <h3 className="text-2xl font-bold text-peaceful-darkGray mb-6">
-                Get Your Full Report
-              </h3>
-              <form onSubmit={handleEmailSubmit} className="space-y-4">
+            <section className="border border-ink-black p-8 md:p-12">
+              <h3 className="text-xl mb-8">Get Your Report</h3>
+              <form onSubmit={handleEmailSubmit} className="space-y-6">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                    Email Address *
+                  <label htmlFor="email" className="block font-mono text-xs tracking-widest uppercase text-ink-light mb-2">
+                    Email *
                   </label>
                   <input
                     type="email"
@@ -299,40 +270,39 @@ export default function ResultsPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="input-field"
+                    className="input-field text-lg"
                     placeholder="you@example.com"
                   />
                 </div>
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                    Name (Optional)
+                  <label htmlFor="name" className="block font-mono text-xs tracking-widest uppercase text-ink-light mb-2">
+                    Name
                   </label>
                   <input
                     type="text"
                     id="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="input-field"
+                    className="input-field text-lg"
                     placeholder="Your name"
                   />
                 </div>
                 <div>
                   <label
                     htmlFor="currentSituation"
-                    className="block text-sm font-medium text-gray-700 mb-1"
+                    className="block font-mono text-xs tracking-widest uppercase text-ink-light mb-2"
                   >
-                    Current Situation (Optional)
+                    Current Situation
                   </label>
                   <textarea
                     id="currentSituation"
                     value={currentSituation}
                     onChange={(e) => setCurrentSituation(e.target.value)}
-                    className="textarea-field"
-                    rows={3}
-                    placeholder="Tell us a bit about where you are now..."
+                    className="textarea-field text-lg min-h-[100px]"
+                    placeholder="Where are you now..."
                   />
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-4 pt-4">
                   <button
                     type="button"
                     onClick={() => setShowEmailForm(false)}
@@ -343,9 +313,9 @@ export default function ResultsPage() {
                   <button
                     type="submit"
                     disabled={isSendingEmail}
-                    className="btn-primary flex-1 disabled:opacity-50"
+                    className="btn-primary flex-1 disabled:opacity-30"
                   >
-                    {isSendingEmail ? 'Sending...' : 'Send My Report'}
+                    {isSendingEmail ? 'Sending...' : 'Send'}
                   </button>
                 </div>
               </form>
@@ -354,19 +324,15 @@ export default function ResultsPage() {
 
           {/* Email Sent Confirmation */}
           {emailSent && (
-            <section className="card bg-green-50 border-green-200 text-center">
-              <div className="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fillRule="evenodd"
-                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    clipRule="evenodd"
-                  />
+            <section className="border border-ink-black p-12 text-center">
+              <div className="w-12 h-12 border border-ink-black flex items-center justify-center mx-auto mb-6">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-2xl font-bold text-green-800 mb-2">Check Your Email!</h3>
-              <p className="text-green-700">
-                We&apos;ve sent your full PDF report to <strong>{email}</strong>
+              <h3 className="text-xl mb-2">Sent</h3>
+              <p className="text-body text-sm">
+                Your report has been sent to <span className="text-ink-black">{email}</span>
               </p>
             </section>
           )}
@@ -374,11 +340,13 @@ export default function ResultsPage() {
       </main>
 
       {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 mt-12 border-t border-gray-200">
-        <div className="text-center text-gray-500 text-sm">
-          <Link href="/faq" className="hover:text-peaceful-blue transition-colors">
-            Learn more about our methodology
-          </Link>
+      <footer className="border-t border-ink-faint">
+        <div className="container mx-auto px-6 py-8">
+          <div className="text-center">
+            <Link href="/faq" className="font-mono text-xs text-ink-light hover:text-ink-black transition-colors tracking-widest uppercase">
+              Learn More
+            </Link>
+          </div>
         </div>
       </footer>
     </div>
